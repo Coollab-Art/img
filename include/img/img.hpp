@@ -1,6 +1,8 @@
 #pragma once
 
 #include <glpp/glpp.hpp>
-#include "../../src/Program.h"
-#include "../../src/RenderTarget.h"
-#include "../../src/Texture.h"
+#include "../../src/Image.h"
+#include "../../src/ImageSize.h"
+#include "../../src/ImageSizeU.h"
+#include "../../src/Load.h"
+#include "../../src/Save.h"

@@ -11,15 +11,14 @@ else()
 endif()
 
 # ---Add stb_image---
-add_library(stb_image
-    "lib/stb_image/stb_image.cpp"
-    "lib/stb_image/stb_image_write.cpp")
+add_library(stb_image "lib/stb_image/stb_image.cpp"
+                      "lib/stb_image/stb_image_write.cpp")
 target_link_libraries(img PRIVATE stb_image)
 
 # ---Add source files---
 target_include_directories(img INTERFACE include)
 target_include_directories(img PRIVATE lib)
 target_sources(img PRIVATE
-    src/Write.cpp
-    src/Image.cpp
+    src/Save.cpp
+    src/Load.cpp
 )

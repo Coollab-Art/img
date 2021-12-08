@@ -2,9 +2,10 @@
 
 #include "ImageSize.h"
 
-namespace img::ImageSizeU {
+namespace img {
+namespace ImageSizeU {
 
-/// returns the aspect ratio of the rectangle, aka width / height
+/// Returns the aspect ratio of the rectangle, aka width / height
 template<typename T>
 float aspect_ratio(ImageSizeT<T> size)
 {
@@ -29,4 +30,5 @@ ImageSizeT<float> fit_into(ImageSizeT<T> frame, ImageSizeT<T> image)
     }
 }
 
-} // namespace img::ImageSizeU
+} // namespace ImageSizeU
+} // namespace img

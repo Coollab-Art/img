@@ -12,8 +12,8 @@ Image load(const char* file_path, int desired_channels_count, bool flip_vertical
     if (!data) {
         throw std::runtime_error{"[img::load] Couldn't load image from \"" + std::string{file_path} + "\":\n" + stbi_failure_reason()};
     }
-    return Image{{static_cast<ImageSize::DataType>(w),
-                  static_cast<ImageSize::DataType>(h)},
+    return Image{{static_cast<Size::DataType>(w),
+                  static_cast<Size::DataType>(h)},
                  desired_channels_count,
                  data};
 }

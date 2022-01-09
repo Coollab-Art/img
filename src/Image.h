@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "ImageSize.h"
+#include "Size.h"
 
 namespace img {
 
@@ -13,19 +13,19 @@ public:
     /// NB: The Image takes ownership of the data pointer
     /// It is your responsibility to make sure that size and channels_count properly match what is in data
     /// Alternatively you can use img::load() to create an Image
-    Image(ImageSize size, int channels_count, uint8_t* data)
+    Image(Size size, int channels_count, uint8_t* data)
         : _size{size}, _channels_count{channels_count}, _data{data}
     {
     }
 
     /// Returns the size of the image (in pixels)
-    ImageSize size() const { return _size; }
+    Size size() const { return _size; }
 
     /// Returns the width of the image (in pixels)
-    ImageSize::DataType width() const { return size().width(); }
+    Size::DataType width() const { return size().width(); }
 
     /// Returns the height of the image (in pixels)
-    ImageSize::DataType height() const { return size().height(); }
+    Size::DataType height() const { return size().height(); }
 
     /// Returns the number of channels per pixel (e.g. 4 if the format is RGBA)
     int channels_count() const { return _channels_count; }
@@ -40,7 +40,7 @@ public:
     size_t data_size() const { return width() * height() * static_cast<size_t>(channels_count()); }
 
 private:
-    ImageSize                  _size;
+    Size                       _size;
     int                        _channels_count;
     std::unique_ptr<uint8_t[]> _data;
 };

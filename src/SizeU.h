@@ -1,20 +1,20 @@
 #pragma once
 
-#include "ImageSize.h"
+#include "Size.h"
 
 namespace img {
-namespace ImageSizeU {
+namespace SizeU {
 
 /// Returns the aspect ratio of the rectangle, aka width / height
 template<typename T>
-float aspect_ratio(ImageSizeT<T> size)
+float aspect_ratio(SizeT<T> size)
 {
     return static_cast<float>(size.width()) / static_cast<float>(size.height());
 }
 
-/// Returns the biggest ImageSizeT<float> that fits into frame and has the same aspect ratio as image
+/// Returns the biggest SizeT<float> that fits into frame and has the same aspect ratio as image
 template<typename T>
-ImageSizeT<float> fit_into(ImageSizeT<T> frame, ImageSizeT<T> image)
+SizeT<float> fit_into(SizeT<T> frame, SizeT<T> image)
 {
     auto image_aspect = aspect_ratio(image);
     auto frame_aspect = aspect_ratio(frame);
@@ -30,5 +30,5 @@ ImageSizeT<float> fit_into(ImageSizeT<T> frame, ImageSizeT<T> image)
     }
 }
 
-} // namespace ImageSizeU
+} // namespace SizeU
 } // namespace img

@@ -20,7 +20,7 @@ public:
     {
         assert(w >= 1 && h >= 1);
     }
-    friend bool operator==(const SizeT& lhs, const SizeT& rhs) { return lhs.width() == rhs.width && lhs.height() == rhs.height; }
+    friend bool operator==(const SizeT& lhs, const SizeT& rhs) { return lhs.width() == rhs.width() && lhs.height() == rhs.height(); }
     friend bool operator!=(const SizeT& lhs, const SizeT& rhs) { return !(lhs == rhs); }
     template<typename U>
     explicit operator SizeT<U>() const

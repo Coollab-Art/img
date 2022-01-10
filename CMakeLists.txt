@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 add_library(img)
 add_library(img::img ALIAS img)
-target_compile_features(img PRIVATE cxx_std_11)
+target_compile_features(img PRIVATE cxx_std_17)
 
 if (MSVC)
     target_compile_options(img PRIVATE /WX /W4)

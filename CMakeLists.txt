@@ -18,11 +18,11 @@ endif()
 # ---Add stb_image---
 add_library(stb_image "lib/stb_image/stb_image.cpp"
                       "lib/stb_image/stb_image_write.cpp")
-target_link_libraries(img PRIVATE stb_image)
+target_link_libraries(img PUBLIC stb_image)
 
 # ---Add source files---
 target_include_directories(img INTERFACE include)
-target_include_directories(img PRIVATE lib)
+target_include_directories(img PUBLIC lib)
 target_sources(img PRIVATE
     src/Save.cpp
     src/Load.cpp

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include "Image.h"
 
 namespace img {
@@ -8,7 +9,7 @@ namespace img {
 /// Throws a std::runtime_error if writing to the file fails.
 /// @param file_path The destination path for the image: something like "out/myImage.png". The folders in the path must exist.
 /// @param flip_vertically By default we use the OpenGL convention: the first row should be the bottom of the image. You can set flip_vertically to false if your first row is at the top of the image.
-void save_png(const char* file_path, const Image& image, bool flip_vertically = true);
+void save_png(std::filesystem::path file_path, const Image& image, bool flip_vertically = true);
 
 /// Saves an image as PNG.
 /// Throws a std::runtime_error if writing to the file fails.

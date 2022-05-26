@@ -3,9 +3,9 @@
 
 namespace img {
 
-void save_png(const char* file_path, const Image& image, bool flip_vertically)
+void save_png(std::filesystem::path file_path, const Image& image, bool flip_vertically)
 {
-    save_png(file_path, image.width(), image.height(), image.data(), image.channels_count(), flip_vertically);
+    save_png(file_path.string().c_str(), image.width(), image.height(), image.data(), image.channels_count(), flip_vertically);
 }
 
 void save_png(const char*    file_path,

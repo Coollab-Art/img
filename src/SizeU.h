@@ -16,19 +16,40 @@ float aspect_ratio(SizeT<T> size)
 template<typename T>
 SizeT<float> fit_into(SizeT<T> frame, SizeT<T> image)
 {
-    auto image_aspect = aspect_ratio(image);
-    auto frame_aspect = aspect_ratio(frame);
-    if (image_aspect < frame_aspect) {
+    const auto image_aspect = aspect_ratio(image);
+    const auto frame_aspect = aspect_ratio(frame);
+    if (image_aspect < frame_aspect)
+    {
         return {
             static_cast<float>(frame.height()) * image_aspect,
             static_cast<float>(frame.height())};
     }
-    else {
+    else
+    {
         return {
             static_cast<float>(frame.width()),
             static_cast<float>(frame.width()) / image_aspect};
     }
 }
 
-} // namespace SizeU
-} // namespace img
+/// Returns the biggest SizeT<float> that fits into frame and has the given aspect ratio
+template<typename T>
+SizeT<float> fit_into(SizeT<T> frame, float image_aspect)
+{
+    const auto frame_aspect = aspect_ratio(frame);
+    if (image_aspect < frame_aspect)
+    {
+        return {
+            static_cast<float>(frame.height()) * image_aspect,
+            static_cast<float>(frame.height())};
+    }
+    else
+    {
+        return {
+            static_cast<float>(frame.width()),
+            static_cast<float>(frame.width()) / image_aspect};
+    }
+}
+
+}
+} // namespace img::SizeU

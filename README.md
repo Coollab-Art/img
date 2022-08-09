@@ -2,6 +2,20 @@
 
 Simple utilities to work with images.
 
+## Including
+
+To add this library to your project, simply add those two lines to your *CMakeLists.txt*:
+```cmake
+add_subdirectory(path/to/img)
+target_link_libraries(${PROJECT_NAME} PRIVATE img::img)
+```
+
+Then include it as:
+```cpp
+#include <img/img.hpp>
+```
+
+
 ## Size
 
 This is a simple type that holds a width and a height, with one important invariant: ```width >= 1 && height >= 1```. Indeed them beeing negative would make no sense, and them beeing 0 would be problematic too, mostly because for graphics APIs like OpenGL an image with 0 pixels is an error resulting in a crash. Also, this is perfectly fine because if someone wants to be able to represent an empty image, then ```std::optional<img::Size>``` is the perfect fit for it.

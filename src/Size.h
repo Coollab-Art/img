@@ -16,9 +16,9 @@ public:
 
     SizeT() = default;
     SizeT(DataType w, DataType h)
-        : _width{w}, _height{h}
+        : _width{make_valid_size(w)}
+        , _height{make_valid_size(h)}
     {
-        assert(w >= 1 && h >= 1);
     }
     friend bool operator==(const SizeT& lhs, const SizeT& rhs) { return lhs.width() == rhs.width() && lhs.height() == rhs.height(); }
     friend bool operator!=(const SizeT& lhs, const SizeT& rhs) { return !(lhs == rhs); }
@@ -31,18 +31,22 @@ public:
     DataType width() const { return _width; }
     DataType height() const { return _height; }
 
-    /// Sets the width; it must be >= 1
+    /// Sets the width. If w < 1, it will be set to 1.
     void set_width(DataType w)
     {
-        assert(w >= 1);
-        _width = w;
+        _width = make_valid_size(w);
     }
 
-    /// Sets the height; it must be >= 1
+    /// Sets the height. If h < 1, it will be set to 1.
     void set_height(DataType h)
     {
-        assert(h >= 1);
-        _height = h;
+        _height = make_valid_size(h);
+    }
+
+private:
+    auto make_valid_size(DataType x) const -> DataType
+    {
+        return std::max(x, static_cast<DataType>(1));
     }
 
 private:

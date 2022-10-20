@@ -4,15 +4,21 @@ add_library(img)
 add_library(img::img ALIAS img)
 target_compile_features(img PRIVATE cxx_std_17)
 
-if (img_ENABLE_WARNINGS_AS_ERRORS)
-    message("-- [img] Enabling warnings as errors for img")
-    if(MSVC)
-        target_compile_options(img PRIVATE /WX /W4)
-    else()
-        target_compile_options(img PRIVATE -Werror -Wall -Wextra -Wpedantic -pedantic-errors -Wconversion -Wsign-conversion)
-    endif()
+# Set warning level
+if(MSVC)
+    target_compile_options(img PRIVATE /W4)
 else()
-    message("-- [img] Not using warnings as errors for img")
+    target_compile_options(img PRIVATE -Wall -Wextra -Wpedantic -pedantic-errors -Wconversion -Wsign-conversion)
+endif()
+
+# Maybe enable warnings as errors
+set(WARNINGS_AS_ERRORS_FOR_IMG OFF CACHE BOOL "ON iff you want to treat warnings as errors")
+if(WARNINGS_AS_ERRORS_FOR_IMG)
+    if(MSVC)
+        target_compile_options(img PRIVATE /WX)
+    else()
+        target_compile_options(img PRIVATE -Werror)
+    endif()
 endif()
 
 # ---Add stb_image---

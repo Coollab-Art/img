@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 
@@ -20,16 +21,16 @@ public:
         , _height{make_valid_size(h)}
     {
     }
-    friend bool operator==(const SizeT& lhs, const SizeT& rhs) { return lhs.width() == rhs.width() && lhs.height() == rhs.height(); }
-    friend bool operator!=(const SizeT& lhs, const SizeT& rhs) { return !(lhs == rhs); }
+    friend auto operator==(const SizeT& lhs, const SizeT& rhs) -> bool { return lhs.width() == rhs.width() && lhs.height() == rhs.height(); }
+    friend auto operator!=(const SizeT& lhs, const SizeT& rhs) -> bool { return !(lhs == rhs); }
     template<typename U>
     explicit operator SizeT<U>() const
     {
         return SizeT<U>{static_cast<U>(_width), static_cast<U>(_height)};
     }
 
-    DataType width() const { return _width; }
-    DataType height() const { return _height; }
+    auto width() const -> DataType { return _width; }
+    auto height() const -> DataType { return _height; }
 
     /// Sets the width. If w < 1, it will be set to 1.
     void set_width(DataType w)

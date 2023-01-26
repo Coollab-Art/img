@@ -1,8 +1,7 @@
 #include "Load.h"
+#include <stb_image/stb_image.h>
 #include <stdexcept>
 #include <string>
-#define STBI_FAILURE_USERMSG // Asks stb to give us better error messages in stbi_failure_reason()
-#include <stb_image/stb_image.h>
 
 namespace img {
 

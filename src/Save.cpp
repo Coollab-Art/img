@@ -3,7 +3,7 @@
 
 namespace img {
 
-void save_png(std::filesystem::path file_path const&, Image const& image, bool flip_vertically)
+void save_png(std::filesystem::path const& file_path, Image const& image, bool flip_vertically)
 {
     save_png(file_path, image.width(), image.height(), image.data(), image.channels_count(), flip_vertically);
 }

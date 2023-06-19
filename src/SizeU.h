@@ -12,7 +12,7 @@ float aspect_ratio(SizeT<T> size)
     return static_cast<float>(size.width()) / static_cast<float>(size.height());
 }
 
-/// Returns the biggest SizeT<float> that fits into frame and has the same aspect ratio as image
+/// Returns the biggest `SizeT<float>` that fits into `frame` and has the same aspect ratio as `image`.
 template<typename T>
 SizeT<float> fit_into(SizeT<T> frame, SizeT<T> image)
 {

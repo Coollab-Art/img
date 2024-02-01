@@ -12,6 +12,13 @@ float aspect_ratio(SizeT<T> size)
     return static_cast<float>(size.width()) / static_cast<float>(size.height());
 }
 
+/// Returns the inverse aspect ratio of the rectangle, aka height / width
+template<typename T>
+float inverse_aspect_ratio(SizeT<T> size)
+{
+    return static_cast<float>(size.height()) / static_cast<float>(size.width());
+}
+
 /// Returns the biggest `SizeT<float>` that fits into `frame` and has the same aspect ratio as `image`.
 template<typename T>
 SizeT<float> fit_into(SizeT<T> frame, SizeT<T> image)
@@ -22,13 +29,15 @@ SizeT<float> fit_into(SizeT<T> frame, SizeT<T> image)
     {
         return {
             static_cast<float>(frame.height()) * image_aspect,
-            static_cast<float>(frame.height())};
+            static_cast<float>(frame.height())
+        };
     }
     else
     {
         return {
             static_cast<float>(frame.width()),
-            static_cast<float>(frame.width()) / image_aspect};
+            static_cast<float>(frame.width()) / image_aspect
+        };
     }
 }
 
@@ -41,13 +50,15 @@ SizeT<float> fit_into(SizeT<T> frame, float image_aspect)
     {
         return {
             static_cast<float>(frame.height()) * image_aspect,
-            static_cast<float>(frame.height())};
+            static_cast<float>(frame.height())
+        };
     }
     else
     {
         return {
             static_cast<float>(frame.width()),
-            static_cast<float>(frame.width()) / image_aspect};
+            static_cast<float>(frame.width()) / image_aspect
+        };
     }
 }
 

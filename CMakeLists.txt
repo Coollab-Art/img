@@ -4,7 +4,7 @@ set(WARNINGS_AS_ERRORS_FOR_IMG OFF CACHE BOOL "ON iff you want to treat warnings
 
 add_library(img)
 add_library(img::img ALIAS img)
-target_compile_features(img PRIVATE cxx_std_17)
+target_compile_features(img PRIVATE cxx_std_20)
 
 # Set warning level
 if(MSVC)
@@ -24,7 +24,7 @@ endif()
 
 # ---Add stb_image---
 add_library(stb_image "lib/stb_image/stb_image.cpp"
-                      "lib/stb_image/stb_image_write.cpp")
+    "lib/stb_image/stb_image_write.cpp")
 target_link_libraries(img PUBLIC stb_image)
 
 # ---Add source files---

@@ -1,6 +1,7 @@
 #pragma once
-
+#include <cstdint>
 #include <memory>
+#include <span>
 #include "Size.h"
 
 namespace img {
@@ -30,11 +31,14 @@ public:
     /// Returns the number of channels per pixel (e.g. 4 if the format is RGBA)
     int channels_count() const { return _channels_count; }
 
+    std::span<uint8_t>       data_span() { return {data(), data_size()}; }
+    std::span<uint8_t const> data_span() const { return {data(), data_size()}; }
+
     /// Returns a pointer to the beginning of the data array
     uint8_t* data() { return _data.get(); }
 
     /// Returns a pointer to the beginning of the data array
-    const uint8_t* data() const { return _data.get(); }
+    uint8_t const* data() const { return _data.get(); }
 
     /// Returns the number of elements in the data array
     size_t data_size() const { return width() * height() * static_cast<size_t>(channels_count()); }

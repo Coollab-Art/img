@@ -55,6 +55,6 @@ private:
     DataType _height = 1;
 };
 
-using Size = SizeT<uint32_t>;
+using Size = SizeT<uint64_t>;
 
 } // namespace img

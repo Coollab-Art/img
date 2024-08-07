@@ -31,6 +31,7 @@ public:
 
     auto width() const -> DataType { return _width; }
     auto height() const -> DataType { return _height; }
+    auto pixels_count() const -> uint64_t { return _width * _height; }
 
     /// Sets the width. If w < 1, it will be set to 1.
     void set_width(DataType w)
@@ -55,6 +56,6 @@ private:
     DataType _height = 1;
 };
 
-using Size = SizeT<uint64_t>;
+using Size = SizeT<uint32_t>;
 
 } // namespace img

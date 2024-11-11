@@ -3,25 +3,25 @@
 
 namespace img {
 
-void save_png(std::filesystem::path const& file_path, Image const& image, bool flip_vertically)
+auto save_png(std::filesystem::path const& file_path, Image const& image, bool flip_vertically) -> bool
 {
-    save_png(file_path, image.width(), image.height(), image.data(), image.channels_count(), flip_vertically);
+    return save_png(file_path, image.width(), image.height(), image.data(), image.channels_count(), flip_vertically);
 }
 
-void save_png(
+auto save_png(
     std::filesystem::path const& file_path,
     Size::DataType               width,
     Size::DataType               height,
     const void*                  data,
     size_t                       channels_count,
     bool                         flip_vertically
-)
+) -> bool
 {
     stbi_flip_vertically_on_write(flip_vertically ? 1 : 0);
-    stbi_write_png(file_path.string().c_str(), static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 0);
+    return 0 != stbi_write_png(file_path.string().c_str(), static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 0);
 }
 
-auto save_png_to_string(Image const& image, bool flip_vertically) -> std::string
+auto save_png_to_string(Image const& image, bool flip_vertically) -> std::optional<std::string>
 {
     return save_png_to_string(image.width(), image.height(), image.data(), image.channels_count(), flip_vertically);
 }
@@ -38,31 +38,32 @@ auto save_png_to_string(
     const void*    data,
     size_t         channels_count,
     bool           flip_vertically
-) -> std::string
+) -> std::optional<std::string>
 {
     stbi_flip_vertically_on_write(flip_vertically ? 1 : 0);
 
     std::string res{};
-    stbi_write_png_to_func(&write_to_string, &res, static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 0);
-    return res;
+    if (0 != stbi_write_png_to_func(&write_to_string, &res, static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 0))
+        return res;
+    return std::nullopt;
 }
 
-void save_jpeg(std::filesystem::path const& file_path, Image const& image, bool flip_vertically)
+auto save_jpeg(std::filesystem::path const& file_path, Image const& image, bool flip_vertically) -> bool
 {
-    save_jpeg(file_path.string().c_str(), image.width(), image.height(), image.data(), image.channels_count(), flip_vertically);
+    return save_jpeg(file_path.string().c_str(), image.width(), image.height(), image.data(), image.channels_count(), flip_vertically);
 }
 
-void save_jpeg(
+auto save_jpeg(
     std::filesystem::path const& file_path,
     Size::DataType               width,
     Size::DataType               height,
     void const*                  data,
     size_t                       channels_count,
     bool                         flip_vertically
-)
+) -> bool
 {
     stbi_flip_vertically_on_write(flip_vertically ? 1 : 0);
-    stbi_write_jpg(file_path.string().c_str(), static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 100);
+    return 0 != stbi_write_jpg(file_path.string().c_str(), static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 100);
 }
 
 } // namespace img

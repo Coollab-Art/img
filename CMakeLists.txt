@@ -27,6 +27,9 @@ add_library(stb_image "lib/stb_image/stb_image.cpp"
     "lib/stb_image/stb_image_write.cpp")
 target_link_libraries(img PUBLIC stb_image)
 
+# ---Add tl::expected---
+target_include_directories(img SYSTEM PUBLIC lib/expected/include)
+
 # ---Add source files---
 if(WARNINGS_AS_ERRORS_FOR_IMG)
     target_include_directories(img INTERFACE include)

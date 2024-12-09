@@ -152,6 +152,7 @@ LICENSE
 #define INCLUDE_STB_IMAGE_WRITE_H
 
 #include <stdlib.h>
+#include <atomic>
 
 // if STB_IMAGE_WRITE_STATIC causes problems, try defining STBIWDEF to 'inline' or 'static inline'
 #ifndef STBIWDEF
@@ -173,11 +174,11 @@ STBIWDEF int stbi_write_force_png_filter;
 #endif
 
 #ifndef STBI_WRITE_NO_STDIO
-STBIWDEF int stbi_write_png(char const *filename, int w, int h, int comp, const void  *data, int stride_in_bytes);
+STBIWDEF int stbi_write_png(char const *filename, int w, int h, int comp, const void  *data, int stride_in_bytes, std::atomic<bool> const* cancel = nullptr);
 STBIWDEF int stbi_write_bmp(char const *filename, int w, int h, int comp, const void  *data);
 STBIWDEF int stbi_write_tga(char const *filename, int w, int h, int comp, const void  *data);
 STBIWDEF int stbi_write_hdr(char const *filename, int w, int h, int comp, const float *data);
-STBIWDEF int stbi_write_jpg(char const *filename, int x, int y, int comp, const void  *data, int quality);
+STBIWDEF int stbi_write_jpg(char const *filename, int x, int y, int comp, const void  *data, int quality, std::atomic<bool> const* cancel = nullptr);
 
 #ifdef STBIW_WINDOWS_UTF8
 STBIWDEF int stbiw_convert_wchar_to_utf8(char *buffer, size_t bufferlen, const wchar_t* input);
@@ -186,11 +187,11 @@ STBIWDEF int stbiw_convert_wchar_to_utf8(char *buffer, size_t bufferlen, const w
 
 typedef void stbi_write_func(void *context, void *data, int size);
 
-STBIWDEF int stbi_write_png_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const void  *data, int stride_in_bytes);
+STBIWDEF int stbi_write_png_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const void  *data, int stride_in_bytes, std::atomic<bool> const* cancel = nullptr);
 STBIWDEF int stbi_write_bmp_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const void  *data);
 STBIWDEF int stbi_write_tga_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const void  *data);
 STBIWDEF int stbi_write_hdr_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const float *data);
-STBIWDEF int stbi_write_jpg_to_func(stbi_write_func *func, void *context, int x, int y, int comp, const void  *data, int quality);
+STBIWDEF int stbi_write_jpg_to_func(stbi_write_func *func, void *context, int x, int y, int comp, const void  *data, int quality, std::atomic<bool> const* cancel = nullptr);
 
 STBIWDEF void stbi_flip_vertically_on_write(int flip_boolean);
 
@@ -1125,7 +1126,7 @@ static void stbiw__encode_png_line(unsigned char *pixels, int stride_bytes, int 
    }
 }
 
-STBIWDEF unsigned char *stbi_write_png_to_mem(const unsigned char *pixels, int stride_bytes, int x, int y, int n, int *out_len)
+STBIWDEF unsigned char *stbi_write_png_to_mem(const unsigned char *pixels, int stride_bytes, int x, int y, int n, int *out_len, std::atomic<bool> const* cancel)
 {
    int force_filter = stbi_write_force_png_filter;
    int ctype[5] = { -1, 0, 4, 2, 6 };
@@ -1144,6 +1145,11 @@ STBIWDEF unsigned char *stbi_write_png_to_mem(const unsigned char *pixels, int s
    filt = (unsigned char *) STBIW_MALLOC((x*n+1) * y); if (!filt) return 0;
    line_buffer = (signed char *) STBIW_MALLOC(x * n); if (!line_buffer) { STBIW_FREE(filt); return 0; }
    for (j=0; j < y; ++j) {
+      if (cancel && cancel->load()) {   
+        STBIW_FREE(line_buffer);
+        STBIW_FREE(filt);
+        return nullptr;
+      }
       int filter_type;
       if (force_filter > -1) {
          filter_type = force_filter;
@@ -1212,11 +1218,11 @@ STBIWDEF unsigned char *stbi_write_png_to_mem(const unsigned char *pixels, int s
 }
 
 #ifndef STBI_WRITE_NO_STDIO
-STBIWDEF int stbi_write_png(char const *filename, int x, int y, int comp, const void *data, int stride_bytes)
+STBIWDEF int stbi_write_png(char const *filename, int x, int y, int comp, const void *data, int stride_bytes, std::atomic<bool> const* cancel)
 {
    FILE *f;
    int len;
-   unsigned char *png = stbi_write_png_to_mem((const unsigned char *) data, stride_bytes, x, y, comp, &len);
+   unsigned char *png = stbi_write_png_to_mem((const unsigned char *) data, stride_bytes, x, y, comp, &len, cancel);
    if (png == NULL) return 0;
 
    f = stbiw__fopen(filename, "wb");
@@ -1228,10 +1234,10 @@ STBIWDEF int stbi_write_png(char const *filename, int x, int y, int comp, const 
 }
 #endif
 
-STBIWDEF int stbi_write_png_to_func(stbi_write_func *func, void *context, int x, int y, int comp, const void *data, int stride_bytes)
+STBIWDEF int stbi_write_png_to_func(stbi_write_func *func, void *context, int x, int y, int comp, const void *data, int stride_bytes, std::atomic<bool> const* cancel)
 {
    int len;
-   unsigned char *png = stbi_write_png_to_mem((const unsigned char *) data, stride_bytes, x, y, comp, &len);
+   unsigned char *png = stbi_write_png_to_mem((const unsigned char *) data, stride_bytes, x, y, comp, &len, cancel);
    if (png == NULL) return 0;
    func(context, png, len);
    STBIW_FREE(png);
@@ -1395,7 +1401,7 @@ static int stbiw__jpg_processDU(stbi__write_context *s, int *bitBuf, int *bitCnt
    return DU[0];
 }
 
-static int stbi_write_jpg_core(stbi__write_context *s, int width, int height, int comp, const void* data, int quality) {
+static int stbi_write_jpg_core(stbi__write_context *s, int width, int height, int comp, const void* data, int quality, std::atomic<bool> const* cancel) {
    // Constants that don't pollute global namespace
    static const unsigned char std_dc_luminance_nrcodes[] = {0,0,1,5,1,1,1,1,1,1,0,0,0,0,0,0,0};
    static const unsigned char std_dc_luminance_values[] = {0,1,2,3,4,5,6,7,8,9,10,11};
@@ -1533,6 +1539,8 @@ static int stbi_write_jpg_core(stbi__write_context *s, int width, int height, in
       if(subsample) {
          for(y = 0; y < height; y += 16) {
             for(x = 0; x < width; x += 16) {
+               if (cancel && cancel->load())
+                 return 0;
                float Y[256], U[256], V[256];
                for(row = y, pos = 0; row < y+16; ++row) {
                   // row >= height => use last input row
@@ -1571,6 +1579,8 @@ static int stbi_write_jpg_core(stbi__write_context *s, int width, int height, in
       } else {
          for(y = 0; y < height; y += 8) {
             for(x = 0; x < width; x += 8) {
+               if (cancel && cancel->load())
+                 return 0;
                float Y[64], U[64], V[64];
                for(row = y, pos = 0; row < y+8; ++row) {
                   // row >= height => use last input row
@@ -1604,20 +1614,20 @@ static int stbi_write_jpg_core(stbi__write_context *s, int width, int height, in
    return 1;
 }
 
-STBIWDEF int stbi_write_jpg_to_func(stbi_write_func *func, void *context, int x, int y, int comp, const void *data, int quality)
+STBIWDEF int stbi_write_jpg_to_func(stbi_write_func *func, void *context, int x, int y, int comp, const void *data, int quality, std::atomic<bool> const* cancel)
 {
    stbi__write_context s = { 0 };
    stbi__start_write_callbacks(&s, func, context);
-   return stbi_write_jpg_core(&s, x, y, comp, (void *) data, quality);
+   return stbi_write_jpg_core(&s, x, y, comp, (void *) data, quality, cancel);
 }
 
 
 #ifndef STBI_WRITE_NO_STDIO
-STBIWDEF int stbi_write_jpg(char const *filename, int x, int y, int comp, const void *data, int quality)
+STBIWDEF int stbi_write_jpg(char const *filename, int x, int y, int comp, const void *data, int quality, std::atomic<bool> const* cancel)
 {
    stbi__write_context s = { 0 };
    if (stbi__start_write_file(&s,filename)) {
-      int r = stbi_write_jpg_core(&s, x, y, comp, data, quality);
+      int r = stbi_write_jpg_core(&s, x, y, comp, data, quality, cancel);
       stbi__end_write_file(&s);
       return r;
    } else

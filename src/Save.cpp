@@ -19,7 +19,7 @@ auto save_png(
 ) -> bool
 {
     stbi_flip_vertically_on_write(row_order == FirstRowIs::Bottom ? 1 : 0);
-    return 0 != stbi_write_png(file_path.string().c_str(), static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 0, options.cancel);
+    return 0 != stbi_write_png(file_path.string().c_str(), static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 0, options.cancel, options.progress);
 }
 
 auto save_png_to_string(Image const& image, SaveOptions const& options) -> std::optional<std::string>
@@ -45,7 +45,7 @@ auto save_png_to_string(
     stbi_flip_vertically_on_write(row_order == FirstRowIs::Bottom ? 1 : 0);
 
     std::string res{};
-    if (0 != stbi_write_png_to_func(&write_to_string, &res, static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 0, options.cancel))
+    if (0 != stbi_write_png_to_func(&write_to_string, &res, static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 0, options.cancel, options.progress))
         return res;
     return std::nullopt;
 }
@@ -66,7 +66,7 @@ auto save_jpeg(
 ) -> bool
 {
     stbi_flip_vertically_on_write(row_order == FirstRowIs::Bottom ? 1 : 0);
-    return 0 != stbi_write_jpg(file_path.string().c_str(), static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 100, options.cancel);
+    return 0 != stbi_write_jpg(file_path.string().c_str(), static_cast<int>(width), static_cast<int>(height), static_cast<int>(channels_count), data, 100, options.cancel, options.progress);
 }
 
 } // namespace img

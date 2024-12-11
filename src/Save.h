@@ -9,6 +9,7 @@ namespace img {
 
 struct SaveOptions {
     std::atomic<bool> const* cancel{nullptr};
+    std::atomic<float>*      progress{nullptr};
 };
 
 /// Saves an image as PNG.

@@ -25,6 +25,7 @@ endif()
 # ---Add stb_image---
 add_library(stb_image "lib/stb_image/stb_image.cpp"
     "lib/stb_image/stb_image_write.cpp")
+target_compile_features(stb_image PRIVATE cxx_std_20)
 target_link_libraries(img PUBLIC stb_image)
 
 # ---Add tl::expected---
